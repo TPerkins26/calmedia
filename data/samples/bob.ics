@@ -1,0 +1,34 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//HTC//Calendar Social Media Bob//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Bob's Engineering Schedule
+X-WR-TIMEZONE:America/New_York
+BEGIN:VEVENT
+UID:bob-physics-mwf
+DTSTART;TZID=America/New_York:20261016T090000
+DTEND;TZID=America/New_York:20261016T101500
+SUMMARY:PHYS 2051 Physics Lecture
+LOCATION:Clippinger Laboratories 194
+DESCRIPTION:Electromagnetism and waves
+RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR
+END:VEVENT
+BEGIN:VEVENT
+UID:bob-alice-coffee-fri
+DTSTART;TZID=America/New_York:20261016T120000
+DTEND;TZID=America/New_York:20261016T130000
+SUMMARY:Coffee with Alice
+LOCATION:Front Room Coffeehouse
+DESCRIPTION:Meet Alice for lunch and coffee
+END:VEVENT
+BEGIN:VEVENT
+UID:bob-soccer-fri
+DTSTART;TZID=America/New_York:20261016T170000
+DTEND;TZID=America/New_York:20261016T183000
+SUMMARY:Intramural Soccer Match
+LOCATION:Mill Street Recreation Fields
+DESCRIPTION:Quarterfinals match vs Engineering United
+END:VEVENT
+END:VCALENDAR
+

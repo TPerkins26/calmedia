@@ -1,0 +1,35 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//HTC//Calendar Social Media Charlie//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Charlie's Campus Agenda
+X-WR-TIMEZONE:America/New_York
+BEGIN:VEVENT
+UID:charlie-psych-tr
+DTSTART;TZID=America/New_York:20261015T100000
+DTEND;TZID=America/New_York:20261015T113000
+SUMMARY:PSY 1010 General Psychology
+LOCATION:Gordy Hall 201
+DESCRIPTION:Cognitive science overview
+RRULE:FREQ=WEEKLY;BYDAY=TU,TH
+END:VEVENT
+BEGIN:VEVENT
+UID:charlie-study-mwf
+DTSTART;TZID=America/New_York:20261016T133000
+DTEND;TZID=America/New_York:20261016T150000
+SUMMARY:Quiet Study Session
+LOCATION:Alden Library 4th Floor
+DESCRIPTION:Literature review reading
+RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR
+END:VEVENT
+BEGIN:VEVENT
+UID:charlie-art-gallery
+DTSTART;TZID=America/New_York:20261016T183000
+DTEND;TZID=America/New_York:20261016T200000
+SUMMARY:Campus Art Gallery Reception
+LOCATION:Kennedy Museum of Art
+DESCRIPTION:Art opening reception
+END:VEVENT
+END:VCALENDAR
+

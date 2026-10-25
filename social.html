@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CalMedia — Campus Network &amp; Friends</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    // Ensure deep link points to network tab
+    if (!window.location.hash) {
+      window.location.hash = "#friends";
+    }
+  </script>
+</head>
+<body>
+  <!-- Header / Top Navigation -->
+  <header class="top-nav">
+    <div class="nav-brand">
+      <div class="logo-icon">📅✨</div>
+      <div class="brand-text">
+        <h1>CalMedia</h1>
+        <span class="badge harness-badge">TP_Project_2.1 • Friends &amp; Campus Network</span>
+      </div>
+    </div>
+
+    <!-- Active Persona Switcher & Controls -->
+    <div class="nav-controls">
+      <div class="sync-indicator">
+        <span class="pulse-dot"></span>
+        <span id="lastSyncLabel">Synced: Just now</span>
+        <button id="btnSyncNow" class="btn btn-sm btn-ghost" title="Refresh all feeds">🔄 Sync</button>
+      </div>
+
+      <div class="user-switcher-container">
+        <label for="userSelect">Active Profile:</label>
+        <select id="userSelect" class="form-select">
+          <option value="alice">Alice Chen (@alice) 👩‍🎨</option>
+          <option value="bob">Bob Martinez (@bob) 🏃‍♂️</option>
+          <option value="charlie">Charlie Taylor (@charlie) 📚</option>
+        </select>
+      </div>
+
+      <div class="privacy-control">
+        <button id="btnTogglePrivacy" class="btn btn-sm btn-outline" title="Toggle privacy masking">
+          Privacy: <span id="privacyStatusBadge" class="badge">Transparent</span>
+        </button>
+      </div>
+
+      <button id="btnCreateAccountModal" class="btn btn-outline" title="Register a new student profile">✨ + Create Account</button>
+      <button id="btnNewPostModal" class="btn btn-primary">📸 Post Moment</button>
+      <button id="btnNewScheduleModal" class="btn btn-secondary">📅 Schedule Together</button>
+    </div>
+  </header>
+
+  <!-- Main App Shell -->
+  <main class="app-container">
+    <!-- View Navigation Tabs -->
+    <nav class="view-tabs">
+      <button class="tab-btn" data-tab="feedTab">
+        <span class="tab-icon">📸</span> Moments Feed
+      </button>
+      <button class="tab-btn" data-tab="availabilityTab">
+        <span class="tab-icon">⚡</span> Compare Availability & Heatmap
+      </button>
+      <button class="tab-btn active" data-tab="networkTab">
+        <span class="tab-icon">👥</span> Campus Network &amp; Friends <span id="networkBadge" class="badge badge-network hidden">0</span>
+      </button>
+      <button class="tab-btn" data-tab="myCalendarTab">
+        <span class="tab-icon">📆</span> My Calendar &amp; Feeds
+      </button>
+      <button class="tab-btn" data-tab="harnessTab">
+        <span class="tab-icon">🧪</span> Test Harness &amp; Verification
+      </button>
+      <button class="tab-btn" data-tab="discordTab">
+        <span class="tab-icon">🎮</span> Discord Bot Console
+      </button>
+    </nav>
+
+    <!-- Tab 1: Social Moments Feed -->
+    <section id="feedTab" class="tab-content">
+      <div class="feed-layout">
+        <div class="feed-stream">
+          <div class="feed-header-bar">
+            <h2>Campus & Friends Moments</h2>
+            <span class="subtext">Photos from verified calendar events & spontaneous study breaks</span>
+          </div>
+          <div id="postsList" class="posts-grid">
+            <div class="loading-state">Loading moments feed...</div>
+          </div>
+        </div>
+
+        <aside class="feed-sidebar">
+          <div class="card mini-card">
+            <h3>⚡ Quick Hangout Finder</h3>
+            <p class="text-muted">Find when you and your friends are both free today.</p>
+            <div id="quickMutualSlots" class="quick-slots-container"></div>
+            <button id="btnJumpToAvailability" class="btn btn-sm btn-outline full-width mt-3">
+              Open Full Heatmap →
+            </button>
+          </div>
+
+          <div class="card mini-card mt-3">
+            <h3>👥 Friend Circle</h3>
+            <div class="friends-list" id="friendsMiniList"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Tab 2: Availability & Heatmap -->
+    <section id="availabilityTab" class="tab-content">
+      <div class="card availability-card">
+        <div class="card-header-bar">
+          <div>
+            <h2>Group Availability Matrix</h2>
+            <p class="text-muted">Multi-schedule intersection algorithm identifies contiguous mutual free blocks</p>
+          </div>
+          <div class="availability-controls">
+            <label for="compareDate">Date:</label>
+            <input type="date" id="compareDate" class="form-input" value="2026-10-16">
+            <button id="btnRecalculateAvail" class="btn btn-primary btn-sm">Calculate Overlap</button>
+          </div>
+        </div>
+
+        <div class="participants-checkbox-row">
+          <span class="label-text">Select Friends to Compare:</span>
+          <label class="checkbox-pill">
+            <input type="checkbox" name="compareUser" value="alice" checked> Alice (@alice)
+          </label>
+          <label class="checkbox-pill">
+            <input type="checkbox" name="compareUser" value="bob" checked> Bob (@bob)
+          </label>
+          <label class="checkbox-pill">
+            <input type="checkbox" name="compareUser" value="charlie" checked> Charlie (@charlie)
+          </label>
+        </div>
+
+        <div class="mutual-slots-banner" id="mutualSlotsBanner">
+          <div class="banner-title">
+            <span class="icon">✨</span>
+            <strong>Mutual Free Windows Found:</strong>
+          </div>
+          <div class="slot-chips-row" id="mutualSlotsChips"></div>
+        </div>
+
+        <div class="schedule-matrix" id="scheduleMatrix"></div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Campus Network & Friends (Default Active on social.html) -->
+    <section id="networkTab" class="tab-content active">
+      <div class="network-layout">
+        <!-- Top Network Overview Banner -->
+        <div class="card network-overview-card">
+          <div class="network-overview-content">
+            <div>
+              <h2>👥 Campus Friends &amp; Availability Network</h2>
+              <p class="text-muted">Connect with classmates and friends to see mutual free time, plan hangouts, and share verified calendar moments.</p>
+            </div>
+            <button class="btn btn-primary" onclick="openModal('newAccountModal')">✨ + Create Another Profile</button>
+          </div>
+          <div class="network-search-bar mt-3">
+            <input type="text" id="networkSearchInput" class="form-input" placeholder="🔍 Search students by name, handle (@bob), or Discord tag...">
+          </div>
+        </div>
+
+        <!-- Incoming Requests Section -->
+        <div id="incomingRequestsSection" class="card mt-3 hidden">
+          <div class="card-header-bar">
+            <h3>📬 Friend Requests Received</h3>
+            <span id="incomingCountBadge" class="badge badge-warning">0 Pending</span>
+          </div>
+          <div id="incomingRequestsList" class="network-cards-grid mt-2"></div>
+        </div>
+
+        <!-- Mutual Friends Section -->
+        <div class="card mt-3">
+          <div class="card-header-bar">
+            <h3>🤝 Mutual Friends</h3>
+            <span id="friendsCountBadge" class="badge badge-verified">0 Friends</span>
+          </div>
+          <div id="friendsListContainer" class="network-cards-grid mt-2"></div>
+        </div>
+
+        <!-- Campus Student Directory -->
+        <div class="card mt-3">
+          <div class="card-header-bar">
+            <h3>🌍 Campus Student Directory</h3>
+            <span class="text-muted" style="font-size: 0.85rem">Discover other students across campus to connect and compare schedules</span>
+          </div>
+          <div id="campusDirectoryContainer" class="network-cards-grid mt-2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 4: My Calendar & Feeds -->
+    <section id="myCalendarTab" class="tab-content">
+      <div class="calendar-management-grid">
+        <div class="card">
+          <h2>Connected Shareable Calendar Links</h2>
+          <p class="text-muted">Import Google Calendar (.ics), Apple iCloud (webcal://), Outlook, or Canvas LMS links.</p>
+
+          <form id="addFeedForm" class="add-feed-form">
+            <input type="url" id="feedUrlInput" class="form-input" placeholder="Paste shareable .ics or webcal:// link" required>
+            <button type="submit" class="btn btn-primary">Connect Feed</button>
+          </form>
+
+          <div class="connected-feeds-list" id="connectedFeedsList"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header-bar">
+            <h2>Current Agenda</h2>
+            <span id="myEventCountBadge" class="badge">0 events</span>
+          </div>
+          <div class="events-agenda-list" id="myEventsList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 5: Test Harness & Verification -->
+    <section id="harnessTab" class="tab-content">
+      <div class="card">
+        <h2>Automated Harness Verification Suite</h2>
+        <p class="text-muted">Direct verification of acceptance criteria specified in <code>Harness.md</code></p>
+        
+        <div class="verification-grid">
+          <div class="verify-card" id="testCardIngest">
+            <div class="verify-status" id="statusIngest">⚪ Ready</div>
+            <h3>1. Multi-User Ingestion</h3>
+            <p>Parses RFC 5545 `.ics` feeds for Alice, Bob, and Charlie with recurrence rules.</p>
+            <button class="btn btn-sm btn-outline verify-btn" onclick="runHarnessTest('ingest')">Run Test</button>
+          </div>
+
+          <div class="verify-card" id="testCardAvail">
+            <div class="verify-status" id="statusAvail">⚪ Ready</div>
+            <h3>2. Availability Intersection</h3>
+            <p>Tests mathematical set intersection $\bigcap \text{Free}_u$ to find open hangout slots.</p>
+            <button class="btn btn-sm btn-outline verify-btn" onclick="runHarnessTest('avail')">Run Test</button>
+          </div>
+
+          <div class="verify-card" id="testCardPrivacy">
+            <div class="verify-status" id="statusPrivacy">⚪ Ready</div>
+            <h3>3. Privacy Masking</h3>
+            <p>Verifies Charlie's events are masked as "🔒 Busy" without leaking private titles.</p>
+            <button class="btn btn-sm btn-outline verify-btn" onclick="runHarnessTest('privacy')">Run Test</button>
+          </div>
+
+          <div class="verify-card" id="testCardPreflight">
+            <div class="verify-status" id="statusPreflight">⚪ Ready</div>
+            <h3>4. Pre-Flight Group Conflict</h3>
+            <p>Detects collision when scheduling during Bob's soccer match and recommends free alternatives.</p>
+            <button class="btn btn-sm btn-outline verify-btn" onclick="runHarnessTest('preflight')">Run Test</button>
+          </div>
+        </div>
+
+        <div class="harness-terminal-log mt-3">
+          <h4>Execution Console Output:</h4>
+          <pre id="harnessLogOutput">Click "Run Test" above to execute verification steps.</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 6: Discord Bot Console -->
+    <section id="discordTab" class="tab-content">
+      <div class="discord-console-layout">
+        <div class="card discord-window-card">
+          <div class="discord-app-frame">
+            <div class="discord-channel-header">
+              <div class="discord-header-left">
+                <span class="discord-hash">#</span>
+                <span class="discord-channel-name">calendar-sync</span>
+                <span class="discord-channel-topic">Synchronized group availability, schedule booking &amp; verified moments</span>
+              </div>
+              <div class="discord-header-right">
+                <div class="discord-bot-status-pill">
+                  <span class="discord-online-dot"></span>
+                  <span>CalMedia Bot <strong>ONLINE</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="discord-sender-bar">
+              <label for="discordSenderSelect">Chat as Discord Account:</label>
+              <select id="discordSenderSelect" class="form-select-sm">
+                <option value="alice#1337">👩‍🎨 Alice Chen (alice#1337 • ID: 100000000000000001)</option>
+                <option value="bob#2024">🏃‍♂️ Bob Martinez (bob#2024 • ID: 100000000000000002)</option>
+                <option value="charlie#9090">📚 Charlie Taylor (charlie#9090 • ID: 100000000000000003)</option>
+                <option value="unregistered#0000">👤 Guest User (unregistered#0000 • Unlinked)</option>
+              </select>
+            </div>
+
+            <div class="discord-messages-stream" id="discordMessagesStream"></div>
+
+            <div class="discord-quick-chips">
+              <span class="quick-chip" onclick="setDiscordInput('!agenda')">📅 !agenda</span>
+              <span class="quick-chip" onclick="setDiscordInput('!free @bob')">⚡ !free @bob</span>
+              <span class="quick-chip" onclick="setDiscordInput('!meet @bob 15:00-16:00 Coffee Break')">☕ !meet @bob</span>
+              <span class="quick-chip" onclick="setDiscordInput('!privacy BUSY')">🔒 !privacy BUSY</span>
+              <span class="quick-chip" onclick="setDiscordInput('!privacy OPEN')">🔓 !privacy OPEN</span>
+              <span class="quick-chip" onclick="setDiscordInput('!help')">❓ !help</span>
+            </div>
+
+            <div class="discord-attachment-picker">
+              <label for="discordAttachmentSelect">📎 Attach Discord Photo:</label>
+              <select id="discordAttachmentSelect" class="form-select-sm">
+                <option value="">(None - Text command)</option>
+                <option value="images/darkroom_photo.svg">Darkroom Film Critique</option>
+                <option value="images/soccer_photo.svg">Intramural Soccer Match</option>
+                <option value="images/coffee_photo.svg">College Green Coffee Break</option>
+              </select>
+            </div>
+
+            <form id="discordSendForm" class="discord-input-bar">
+              <input type="text" id="discordMessageInput" class="form-input" placeholder="Message #calendar-sync... (e.g. !agenda, !free @bob, !meet)" required autocomplete="off">
+              <button type="submit" class="btn btn-primary btn-sm">Send</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="card discord-info-card">
+          <h2>🎮 Discord Bot Integration Architecture</h2>
+          <p class="text-muted">How Discord server members, slash commands, and interaction webhooks interface with CalMedia.</p>
+
+          <div class="info-block mt-3">
+            <h4>Live Gateway Webhook Endpoint</h4>
+            <code class="code-box">POST /api/discord/webhook</code>
+            <p class="text-muted mt-2">Compatible with standard Discord Interaction Webhooks, Discord.py, and Discord.js bots. Accepts JSON payloads containing <code>sender_id</code>, <code>content</code>, and optional <code>attachment_url</code>.</p>
+          </div>
+
+          <div class="info-block mt-3">
+            <h4>Supported Commands (Prefix <code>!</code> or <code>/</code>):</h4>
+            <ul class="discord-command-list">
+              <li><code>!agenda [date]</code> — Queries your calendar for today's classes and meetings.</li>
+              <li><code>!free [@friend/ALL]</code> — Runs set intersection to find mutual free windows.</li>
+              <li><code>!meet @friend [HH:MM-HH:MM] [title]</code> — Checks pre-flight conflicts and books directly into local calendar stores.</li>
+              <li><code>!privacy [BUSY/OPEN]</code> — Toggles whether friends see event titles or masked busy blocks.</li>
+              <li><code>Photo Attachments</code> — Attaching an image anchors it to your active event and posts it to the campus moments feed.</li>
+            </ul>
+          </div>
+
+          <div class="info-block mt-3">
+            <h4>Linked Demo Discord Accounts:</h4>
+            <div class="discord-accounts-table">
+              <div class="discord-acc-pill">
+                <span>👩‍🎨 <strong>Alice Chen:</strong></span>
+                <code>alice#1337</code> <span class="text-muted">(ID: 100000000000000001)</span>
+              </div>
+              <div class="discord-acc-pill mt-1">
+                <span>🏃‍♂️ <strong>Bob Martinez:</strong></span>
+                <code>bob#2024</code> <span class="text-muted">(ID: 100000000000000002)</span>
+              </div>
+              <div class="discord-acc-pill mt-1">
+                <span>📚 <strong>Charlie Taylor:</strong></span>
+                <code>charlie#9090</code> <span class="text-muted">(ID: 100000000000000003)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal 0: Create Account Modal -->
+  <div class="modal-backdrop" id="newAccountModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>✨ Join CalMedia — Create Account</h3>
+        <button class="btn-close" onclick="closeModal('newAccountModal')">&times;</button>
+      </div>
+      <form id="createAccountForm">
+        <div class="form-group">
+          <label for="regName">Full Name:</label>
+          <input type="text" id="regName" class="form-input" placeholder="e.g. Maya Lin" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" style="grid-column: span 2;">
+            <label for="regHandle">Handle / Username:</label>
+            <input type="text" id="regHandle" class="form-input" placeholder="e.g. @maya" required>
+          </div>
+          <div class="form-group">
+            <label for="regDiscord">Discord Tag:</label>
+            <input type="text" id="regDiscord" class="form-input" placeholder="e.g. maya#4040">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Choose Avatar Icon:</label>
+          <div class="avatar-preset-picker">
+            <label class="avatar-choice"><input type="radio" name="regAvatar" value="👩‍💻" checked><span>👩‍💻</span></label>
+            <label class="avatar-choice"><input type="radio" name="regAvatar" value="🎨"><span>🎨</span></label>
+            <label class="avatar-choice"><input type="radio" name="regAvatar" value="🔬"><span>🔬</span></label>
+            <label class="avatar-choice"><input type="radio" name="regAvatar" value="⚽"><span>⚽</span></label>
+            <label class="avatar-choice"><input type="radio" name="regAvatar" value="🎸"><span>🎸</span></label>
+            <label class="avatar-choice"><input type="radio" name="regAvatar" value="☕"><span>☕</span></label>
+            <label class="avatar-choice"><input type="radio" name="regAvatar" value="🚀"><span>🚀</span></label>
+            <label class="avatar-choice"><input type="radio" name="regAvatar" value="📚"><span>📚</span></label>
+            <label class="avatar-choice"><input type="radio" name="regAvatar" value="🎧"><span>🎧</span></label>
+            <label class="avatar-choice"><input type="radio" name="regAvatar" value="🏃‍♀️"><span>🏃‍♀️</span></label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="regBio">Bio / Major &amp; Interests:</label>
+          <textarea id="regBio" class="form-textarea" rows="2" placeholder="e.g. Architecture &amp; CS junior. Film photography."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="regCalendarUrl">Shareable Calendar Feed URL (Optional):</label>
+          <input type="url" id="regCalendarUrl" class="form-input" placeholder="e.g. https://calendar.google.com/.../basic.ics or webcal://...">
+          <small class="text-muted" style="display:block; margin-top: 0.25rem;">Optional. You can also connect feeds or upload .ics files anytime later.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="regPrivacy">Default Privacy Mode:</label>
+          <select id="regPrivacy" class="form-select">
+            <option value="transparent">🔓 Transparent (Mutual friends can see event titles)</option>
+            <option value="busy_only">🔒 Masked (Friends only see 'Busy' blocks)</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('newAccountModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Profile &amp; Switch</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 1: Post Moment / Photo Modal -->
+  <div class="modal-backdrop" id="newPostModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>📸 Share a Calendar Moment</h3>
+        <button class="btn-close" onclick="closeModal('newPostModal')">&times;</button>
+      </div>
+      <form id="createPostForm">
+        <div class="form-group">
+          <label>Post Type:</label>
+          <div class="radio-toggle-group">
+            <label>
+              <input type="radio" name="postTypeRadio" value="verified" checked>
+              Attach to Calendar Event
+            </label>
+            <label>
+              <input type="radio" name="postTypeRadio" value="spontaneous">
+              Spontaneous Moment
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" id="calendarEventSelectGroup">
+          <label for="eventSelect">Select Event from Your Calendar:</label>
+          <select id="eventSelect" class="form-select"></select>
+        </div>
+
+        <div class="form-group hidden" id="spontaneousTitleGroup">
+          <label for="spontaneousTitle">Activity / Event Title:</label>
+          <input type="text" id="spontaneousTitle" class="form-input" placeholder="e.g. Coffee Break on College Green">
+        </div>
+
+        <div class="form-group">
+          <label>Select Photo:</label>
+          <div class="photo-preset-picker">
+            <label class="photo-choice">
+              <input type="radio" name="photoPreset" value="images/darkroom_photo.svg" checked>
+              <img src="images/darkroom_photo.svg" alt="Darkroom Print">
+              <span>Darkroom Lab</span>
+            </label>
+            <label class="photo-choice">
+              <input type="radio" name="photoPreset" value="images/soccer_photo.svg">
+              <img src="images/soccer_photo.svg" alt="Soccer">
+              <span>Intramural Soccer</span>
+            </label>
+            <label class="photo-choice">
+              <input type="radio" name="photoPreset" value="images/coffee_photo.svg">
+              <img src="images/coffee_photo.svg" alt="Coffee">
+              <span>Coffee Break</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="postCaption">Caption:</label>
+          <textarea id="postCaption" class="form-textarea" rows="3" placeholder="What did this event look like? Share with friends..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="postPrivacy">Privacy:</label>
+          <select id="postPrivacy" class="form-select">
+            <option value="public">🌍 Public (Campus Discovery Feed)</option>
+            <option value="friends">👥 Mutual Friends Only</option>
+            <option value="private">🔒 Private Calendar Memory</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('newPostModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Share Moment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Schedule Together Modal -->
+  <div class="modal-backdrop" id="newScheduleModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>📅 Schedule Event Together</h3>
+        <button class="btn-close" onclick="closeModal('newScheduleModal')">&times;</button>
+      </div>
+      <form id="createScheduleForm">
+        <div class="form-group">
+          <label for="eventTitleInput">Event Title:</label>
+          <input type="text" id="eventTitleInput" class="form-input" placeholder="e.g. Capstone Sprint & Boba" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="eventDateInput">Date:</label>
+            <input type="date" id="eventDateInput" class="form-input" value="2026-10-16" required>
+          </div>
+          <div class="form-group">
+            <label for="eventStartTime">Start Time:</label>
+            <input type="time" id="eventStartTime" class="form-input" value="15:00" required>
+          </div>
+          <div class="form-group">
+            <label for="eventEndTime">End Time:</label>
+            <input type="time" id="eventEndTime" class="form-input" value="16:30" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Invite Participants:</label>
+          <div class="invite-checkbox-group">
+            <label><input type="checkbox" name="scheduleInvite" value="alice" checked> Alice (@alice)</label>
+            <label><input type="checkbox" name="scheduleInvite" value="bob" checked> Bob (@bob)</label>
+            <label><input type="checkbox" name="scheduleInvite" value="charlie" checked> Charlie (@charlie)</label>
+          </div>
+        </div>
+
+        <div id="preflightAlertBox" class="preflight-box alert-success">
+          <div class="preflight-status-line">
+            <span id="preflightIcon">✓</span>
+            <strong id="preflightTitle">No conflicts detected</strong>
+          </div>
+          <div id="preflightDetails" class="preflight-details">All invitees are free during this window!</div>
+        </div>
+
+        <div class="form-group mt-2">
+          <label for="eventLocationInput">Location:</label>
+          <input type="text" id="eventLocationInput" class="form-input" placeholder="e.g. Front Room Coffeehouse / Zoom">
+        </div>
+
+        <div class="form-group">
+          <label for="eventDescInput">Description / Notes:</label>
+          <textarea id="eventDescInput" class="form-textarea" rows="2" placeholder="Agenda or notes..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('newScheduleModal')">Cancel</button>
+          <button type="submit" id="btnConfirmSchedule" class="btn btn-primary">Confirm & Add to Calendars</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

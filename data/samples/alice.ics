@@ -1,0 +1,43 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//HTC//Calendar Social Media Alice//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Alice's Academic & Social Calendar
+X-WR-TIMEZONE:America/New_York
+BEGIN:VEVENT
+UID:alice-capstone-mwf
+DTSTART;TZID=America/New_York:20261016T100000
+DTEND;TZID=America/New_York:20261016T113000
+SUMMARY:CS 4900 Senior Capstone
+LOCATION:Schoonover Center 450
+DESCRIPTION:Final team project sprint check-in
+RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR
+END:VEVENT
+BEGIN:VEVENT
+UID:alice-photo-lab
+DTSTART;TZID=America/New_York:20261015T140000
+DTEND;TZID=America/New_York:20261015T160000
+SUMMARY:Digital Photography Studio Lab
+LOCATION:Seigfred Hall Darkroom
+DESCRIPTION:Film scanning and lighting critique
+RRULE:FREQ=WEEKLY;BYDAY=TU,TH
+END:VEVENT
+BEGIN:VEVENT
+UID:alice-bob-coffee-fri
+DTSTART;TZID=America/New_York:20261016T120000
+DTEND;TZID=America/New_York:20261016T130000
+SUMMARY:Coffee Meetup with Bob
+LOCATION:Front Room Coffeehouse
+DESCRIPTION:Catch up on weekend plans
+END:VEVENT
+BEGIN:VEVENT
+UID:alice-art-gallery
+DTSTART;TZID=America/New_York:20261016T180000
+DTEND;TZID=America/New_York:20261016T200000
+SUMMARY:Campus Art Gallery Opening
+LOCATION:Kennedy Museum of Art
+DESCRIPTION:Opening night reception for Student Photography Exhibition
+END:VEVENT
+END:VCALENDAR
+
